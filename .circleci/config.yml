@@ -1,0 +1,48 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: nixos/nix
+      #  - image: holochain/holonix:latest
+    working_directory: ~/basic-chat
+    steps:
+      - checkout
+      # - run: |-
+      #     nix-channel --update
+      #     nix-env -u
+      #     nix-env -iA
+      #       nixpkgs.gitMinimal
+      #       nixpkgs.nodejs-10_x
+      #       nixpkgs.openssh
+      #       nixpkgs.yarn
+      #       nixpkgs.gnutar
+      #       nixpkgs.curl
+      #       nixpkgs.findutils
+      #       nixpkgs.glibc
+      #       nixpkgs.gnugrep
+      #       nixpkgs.gnused
+      #       nixpkgs.gzip
+      # - run: |-
+      #     apt-get update &&
+      #     apt-get install
+      #       build-essential
+      #       software-properties-common
+      #       gyp
+      #       librsvg2-2
+      #       librsvg2-dev
+      #       node-gyp
+      #       g++
+      #       -y
+      - run:
+          nix-env -f pkgs.nix -iA git
+      - run: |-
+          nix-shell
+            --option substituters 'https://cache.holo.host https://cache.nixos.org'
+            --option trusted-public-keys
+              'cache.holo.host-1:lNXIXtJgS9Iuw4Cu6X0HINLu9sTfcjEntnrgwMQIMcE=
+               cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY='
+            --run 'npm run hc:test'
+
+      # - run: npm install
+      - run: npm run hc:test

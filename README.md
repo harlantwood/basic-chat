@@ -1,5 +1,7 @@
 # Holochain Basic Chat
 
+Circle CI: [![CircleCI](https://circleci.com/gh/holochain/basic-chat.svg?style=svg)](https://circleci.com/gh/holochain/basic-chat)
+
 A simple chat app designed to get new users up, running and developing on Holochain
 
 ![Alt text](doc/screen.png?raw=true)
