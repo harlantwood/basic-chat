@@ -12,6 +12,7 @@ import { JoinConversationScreen } from '../JoinConversationScreen'
 import { RegisterScreen } from '../RegisterScreen'
 
 export const Group = ({
+  blockUser,
   groups = [],
   currentGroup = {},
   joinGroup,
@@ -34,9 +35,9 @@ export const Group = ({
   registerUser,
   setUserList
 }) => (
-  <main>
-    <aside data-open={sidebarOpen}>
-      <UserHeader user={user} />
+    <main>
+      <aside data-open={sidebarOpen}>
+        <UserHeader user={user} blockUser={blockUser} />
         <ConversationList
           user={user}
           conversations={conversations}
@@ -45,18 +46,18 @@ export const Group = ({
           getConversations={getConversations}
           joinConversation={joinConversation}
         />
-      {user.id && <StartConversationForm submit={startConversation} currentGroup={currentGroup}/>}
-    </aside>
-    <section>
-      <ConversationHeader
-        conversation={conversation}
-        user={user}
-        sidebarOpen={sidebarOpen}
-        userListOpen={userListOpen}
-        setSidebar={setSidebar}
-        setUserList={setUserList}
-       />
-       {conversation.id ? (
+        {user.id && <StartConversationForm submit={startConversation} currentGroup={currentGroup} />}
+      </aside>
+      <section>
+        <ConversationHeader
+          conversation={conversation}
+          user={user}
+          sidebarOpen={sidebarOpen}
+          userListOpen={userListOpen}
+          setSidebar={setSidebar}
+          setUserList={setUserList}
+        />
+        {conversation.id ? (
           <row->
             <col->
               <MessageList
@@ -64,7 +65,7 @@ export const Group = ({
                 users={users}
                 messages={messages[conversation.id]}
               />
-              <CreateMessageForm user={user} conversation={conversation} message={''} runCommand={runCommand} sendMessage={sendMessage} getMessages={getMessages}/>
+              <CreateMessageForm user={user} conversation={conversation} message={''} runCommand={runCommand} sendMessage={sendMessage} getMessages={getMessages} />
             </col->
             {userListOpen && (
               <UserList conversation={conversation} users={users} />
@@ -73,8 +74,8 @@ export const Group = ({
         ) : connected ? (
           user.id ? <JoinConversationScreen /> : <RegisterScreen registerUser={registerUser} />
         ) : (
-          <WelcomeScreen message="Please check your Holochain conductor is running and accepting websocket connections on the correct port" />
-        )}
-    </section>
-  </main>
-)
+              <WelcomeScreen message="Please check your Holochain conductor is running and accepting websocket connections on the correct port" />
+            )}
+      </section>
+    </main>
+  )

@@ -10,19 +10,19 @@ const REACT_APP_WEBSOCKET_INTERFACE = process.env.REACT_APP_WEBSOCKET_INTERFACE 
 const INSTANCE_ID = "basic-chat";
 
 export class View extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
-      this.state = {
-        holochainConnection: connect({ url: REACT_APP_WEBSOCKET_INTERFACE }),
-        connected: false,
-        user: {},
-        users: {},
-        conversation: {},
-        conversations: [],
-        messages: {},
-        sidebarOpen: false,
-        userListOpen: window.innerWidth > 1000,
-      }
+    this.state = {
+      holochainConnection: connect({ url: REACT_APP_WEBSOCKET_INTERFACE }),
+      connected: false,
+      user: {},
+      users: {},
+      conversation: {},
+      conversations: [],
+      messages: {},
+      sidebarOpen: false,
+      userListOpen: window.innerWidth > 1000,
+    }
 
     this.actions = {
       // --------------------------------------
@@ -39,6 +39,17 @@ export class View extends React.Component {
       setUser: user => {
         this.setState({ user })
         this.actions.getConversations()
+      },
+
+      blockUser: userId => {
+        console.log(userId)
+        // this.setState({
+        // })
+        this.makeHolochainCall(INSTANCE_ID + '/chat/block_user', {
+          userId
+        }, (result) => {
+          console.log('block user result: ', result)
+        })
       },
 
       // --------------------------------------
@@ -189,10 +200,10 @@ export class View extends React.Component {
     console.log(JSON.stringify(signal.signal))
     const signalContent = signal.signal
     let signalArgs = JSON.parse(signalContent.arguments)
-    switch(signalContent.name) {
+    switch (signalContent.name) {
       case 'new_convo_message':
         const { conversationAddress, message, messageAddress } = signalArgs
-        this.ingestMessages(conversationAddress, [{entry: message, address: messageAddress}])
+        this.ingestMessages(conversationAddress, [{ entry: message, address: messageAddress }])
         if (message.author !== this.state.user.id) {
           this.sendDesktopNotification(`${this.state.users[message.author].name || '?'}: ${message.payload}`)
         }
@@ -213,18 +224,18 @@ export class View extends React.Component {
       body: text,
       tag: 'holochain.basicchat.v1'
     });
-    notification.onclick = function() {
+    notification.onclick = function () {
       window.focus();
       this.close();
     };
     setTimeout(notification.close.bind(notification), 5000);
   }
 
-  componentDidMount () {
+  componentDidMount() {
     // set up browser notifications
-    if(Notification && Notification.permission === 'default') {
+    if (Notification && Notification.permission === 'default') {
       Notification.requestPermission(function (permission) {
-        if(!('permission' in Notification)) {
+        if (!('permission' in Notification)) {
           Notification.permission = permission;
         }
       });
@@ -249,14 +260,14 @@ export class View extends React.Component {
     })
   }
 
-  makeHolochainCall (callString, params, callback) {
+  makeHolochainCall(callString, params, callback) {
     const [instanceId, zome, func] = callString.split('/')
     this.state.holochainConnection.then(({ callZome }) => {
       callZome(instanceId, zome, func)(params).then((result) => callback(JSON.parse(result)))
     })
   }
 
-  render () {
+  render() {
     let props = {
       ...this.state,
       ...this.actions,
